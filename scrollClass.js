@@ -1,20 +1,50 @@
 (function (window, document, $)
-{	
-	function throttle (delay, fn, context)
+{
+	function debounce (fn, delay, context)
 	{
-		var previous = new Date().getTime();
+		var timer = null;
 
 		return function ()
 		{
-			var time = new Date().getTime();
+			var args = arguments, context = this;
 
-			if ((time - previous) >= delay)
+			clearTimeout(timer);
+
+			timer = setTimeout(function ()
 			{
-				previous = time;
+				fn.apply(context, args);
 
-				fn.call(context);
-			}
+			}, delay);
 		}
+	}
+
+	function throttle(fn, threshhold, scope) {
+
+	  var last,
+	      deferTimer;
+
+	  return function () {
+
+	    var context = scope || this,
+	    	now = +new Date,
+	        args = arguments;
+
+	    if (last && now < last + threshhold) 
+	    {
+	     	clearTimeout(deferTimer);
+
+			deferTimer = setTimeout(function () 
+			{
+				last = now;
+				fn.apply(context, args);
+			}, threshhold);
+			} 
+			else 
+			{
+				last = now;
+				fn.apply(context, args);
+			}
+	  	};
 	}
 
 	function ScrollClass (el, options)
@@ -31,10 +61,13 @@
 
 	ScrollClass.prototype.defaultOptions =
 	{
-		viewport       : window,
-		offset         : 0,
-		attribute      : 'data-scroll-class',
-		throttle       : 250,
+		viewport         : window,
+		offset           : 0,
+		attribute        : 'data-scroll-class',
+
+		debounce         : false,
+		throttle         : true,
+		delay            : 250,
 
 		runOnInit      : true,
 		removeOnScroll : false,
@@ -67,9 +100,14 @@
 
 	ScrollClass.prototype._events = function ()
 	{	
-		var self = this;
+		var self = this,
+			fn   = (this.options.throttle) ? throttle : debounce;
 
-		$(this.options.viewport).on('scroll', throttle(this.options.throttle, this._isInView, this));
+		$(this.options.viewport).on('scroll', fn(function (event)
+		{
+			self._isInView();
+
+		}, self.options.delay));
 	};
 
 	ScrollClass.prototype._itemTopPosition = function (item)
@@ -79,6 +117,7 @@
 
 	ScrollClass.prototype._isInView = function ()
 	{	
+		console.log('Now');
 		var self = this;
 
 		this.$items.each(function ()
@@ -119,7 +158,7 @@
 		new ScrollClass(this, options);
 
 		return this;
-	};
+	}
 
 	$.fn.scrollClass             = Plugin;
 	$.fn.scrollClass.constructor = ScrollClass;
