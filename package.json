@@ -1,0 +1,15 @@
+{
+  "name": "scroll-class",
+  "version": "1.0.0",
+  "description": "jQuery | Adds classes when element is scrolled into viewport",
+  "author": "http://ryanknights.co.uk/",
+  "license": "MIT",
+  "homepage": "https://github.com/ryanknights/scroll-class",  
+  "devDependencies": {
+    "grunt": ">=0.4.0",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-copy": "latest"    
+  }
+}

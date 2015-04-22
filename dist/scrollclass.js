@@ -15,7 +15,7 @@
 				fn.apply(context, args);
 
 			}, delay);
-		}
+		};
 	}
 
 	function throttle(fn, threshhold, scope) {
@@ -26,7 +26,7 @@
 	  return function () {
 
 	    var context = scope || this,
-	    	now = +new Date,
+	    	now = +new Date(),
 	        args = arguments;
 
 	    if (last && now < last + threshhold) 
@@ -55,7 +55,7 @@
 		this.options = $.extend({}, this.defaultOptions, options);
 
 		this._init();
-	};
+	}
 
 	ScrollClass.prototype.version = 1.0;
 
@@ -79,9 +79,9 @@
 
 	ScrollClass.prototype._init = function ()
 	{
-		this.options.cachePositions && this._cachePositions();
+		if (this.options.cachePositions) this._cachePositions();
 
-		this.options.runOnInit && this._isInView();
+		if (this.options.runOnInit) this._isInView();
 
 		this._events();
 	};
@@ -113,11 +113,10 @@
 	ScrollClass.prototype._itemTopPosition = function (item)
 	{
 		return item.offset().top + item.outerHeight() + this.options.offset;
-	}
+	};
 
 	ScrollClass.prototype._isInView = function ()
-	{	
-		console.log('Now');
+	{
 		var self = this;
 
 		this.$items.each(function ()
@@ -149,7 +148,7 @@
 				item[action + 'Class'](e);
 			});
 
-			$.isFunction(this.options[action + 'Class']) && this.options[action + 'Class'].call(this);
+			if ($.isFunction(this.options[action + 'Class'])) this.options[action + 'Class'].call(this);
 		}
 	};
 
@@ -163,4 +162,4 @@
 	$.fn.scrollClass             = Plugin;
 	$.fn.scrollClass.constructor = ScrollClass;
 
-}(window, document, jQuery))
+}(window, document, jQuery));
